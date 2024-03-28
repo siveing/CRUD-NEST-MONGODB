@@ -14,7 +14,7 @@ export class ProductService {
      * Find all products
      */
     async findAll() {
-        const resultProducts = await this.productModel.find().populate('categoryId');
+        const resultProducts = await this.productModel.find().populate({ path: 'categoryId' });
         return {
             message: 'All products',
             success: true,
@@ -103,8 +103,8 @@ export class ProductService {
 
     async decreaseStock(id: string, data: UpdateProductStockDto) {
         try {
-            const resultIncreased = await this.productModel.findByIdAndUpdate(id, { $inc: { stock: -data.stock } }, { new: true });
-            if (!resultIncreased) {
+            const resultDecreased = await this.productModel.findByIdAndUpdate(id, { $inc: { stock: -data.stock } }, { new: true });
+            if (!resultDecreased) {
                 // Handle case when document with the given id is not found
                 return {
                     message: 'Product not found',
@@ -116,7 +116,7 @@ export class ProductService {
             return {
                 message: 'Product stock decreased successfully',
                 success: true,
-                data: resultIncreased
+                data: resultDecreased
             };
 
         } catch (error) {

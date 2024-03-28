@@ -1,7 +1,8 @@
 
 
+import { Category } from '@modules/category/schema/category.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type ProductDocument = HydratedDocument<Product>;
 
@@ -9,7 +10,8 @@ export type ProductDocument = HydratedDocument<Product>;
     toJSON: {
         transform: (doc, ret) => {
             delete ret.__v;
-        }
+        },
+        virtuals: true
     },
     timestamps: true,
 })
@@ -26,7 +28,7 @@ export class Product {
     @Prop({ type: Number })
     stock: number;
 
-    @Prop({ type: String, required: true  })
+    @Prop({ type: Types.ObjectId, ref: Category.name, required: true })
     categoryId: string;
 }
 
