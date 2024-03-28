@@ -52,7 +52,7 @@ export class UpdateProductDto extends PickType(CreateProductDto, ['name', 'descr
     categoryId: string;
 }
 
-export class UpdateProductStockDto extends PickType(CreateProductDto, ['stock'] as const) { 
+export class UpdateProductStockDto { 
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty()

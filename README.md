@@ -71,3 +71,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+
+## PUT AND PATCH 
+REF: [https://medium.com/@kamaleshs48/difference-between-put-post-and-patch-35ed362e05e9](https://medium.com/@kamaleshs48/difference-between-put-post-and-patch-35ed362e05e9)

@@ -1,7 +1,7 @@
 
 // PRODUCT CONTROLLER
 
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { ProductService } from "../service/product.service";
 import { CreateProductDto, UpdateProductDto, UpdateProductStockDto } from "../dto/product.dto";
@@ -23,7 +23,7 @@ export class ProductController {
         return this.productService.create(data);
     }
 
-    @Patch(":id")
+    @Put(":id")
     update(@Param("id") id: string, @Body() data: UpdateProductDto) {
         return this.productService.update(id, data);
     }
