@@ -3,9 +3,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { CategoryService } from "../service/category.service";
 import { CategoryController } from "./category.controller";
-import { Category, CategorySchema } from "../schema/category.schema";
+import { Category } from "../schema/category.schema";
 import { getModelToken } from "@nestjs/mongoose";
 import { CreateCategoryDto, UpdateCategoryDto } from "../dto/category.dto";
+import { Product } from "../../product/schema/product.schema";
 
 
 // Mock CategoryModel
@@ -15,6 +16,9 @@ const mockCategoryModel = {
     findByIdAndDelete: jest.fn()
 };
 
+const mockProductModel = {
+    findOne: jest.fn()
+};
 
 describe('Category Controller', () => {
 
@@ -28,6 +32,7 @@ describe('Category Controller', () => {
                 CategoryService,
                 // Provide the mock for CategoryModel
                 { provide: getModelToken(Category.name), useValue: mockCategoryModel },
+                { provide: getModelToken(Product.name), useValue: mockProductModel },
             ],
         }).compile();
 
@@ -83,6 +88,27 @@ describe('Category Controller', () => {
     });
 
     describe('update', () => {
+
+        it('should return an error message if category not found', async () => {
+
+            const categoryId = 'existingCategoryId';
+            const updatedCategoryData: UpdateCategoryDto = {
+                name: 'Siveing Updated',
+                description: 'Siveing description updated'
+            };
+
+            const resultResponse = {
+                message: 'Category not found',
+                success: false,
+                data: null
+            }
+
+            mockCategoryModel.findByIdAndUpdate.mockResolvedValueOnce(null);
+
+            const result = await categoryController.update(categoryId, updatedCategoryData);
+            expect(result).toEqual(resultResponse);
+        });
+
         it('should return an object of category update', async () => {
 
             const categoryId = 'existingCategoryId';
@@ -107,8 +133,29 @@ describe('Category Controller', () => {
     });
 
     describe('delete', () => {
+
+        it('should return an message cannot delete if category has used by any product', async () => {
+
+            mockProductModel.findOne = jest.fn().mockResolvedValueOnce(true);
+
+            const categoryId = 'existingCategoryId';
+
+            const resultResponse = {
+                message: 'Category is used by some product, cannot delete',
+                success: false,
+                data: null
+            }
+
+            mockCategoryModel.findByIdAndDelete.mockResolvedValueOnce(categoryId);
+
+            const result = await categoryController.delete(categoryId);
+            expect(result).toEqual(resultResponse);
+        });
+
         it('should return an message of category deleted', async () => {
 
+            mockProductModel.findOne = jest.fn().mockResolvedValueOnce(false);
+            
             const categoryId = 'existingCategoryId';
 
             const resultResponse = {

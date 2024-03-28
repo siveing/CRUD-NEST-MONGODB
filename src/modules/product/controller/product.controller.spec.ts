@@ -72,7 +72,7 @@ describe('Product Controller', () => {
 
         it('should return message error when no category exist', async () => {
          
-            mockCategoryModel.findById = jest.fn().mockResolvedValue(false);
+            mockCategoryModel.findById = jest.fn().mockResolvedValueOnce(false);
 
             const messageCategoryNotExist = {
                 "data": null,
@@ -96,7 +96,7 @@ describe('Product Controller', () => {
 
         it('should return an object of product created"', async () => {
 
-            mockCategoryModel.findById = jest.fn().mockResolvedValue(true);
+            mockCategoryModel.findById = jest.fn().mockResolvedValueOnce(true);
 
             const data: CreateProductDto = {
                 name: 'Siveing',
