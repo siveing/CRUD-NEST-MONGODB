@@ -1,6 +1,6 @@
 
 
-import { Category } from '@modules/category/schema/category.schema';
+import { Category } from '../../category/schema/category.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 

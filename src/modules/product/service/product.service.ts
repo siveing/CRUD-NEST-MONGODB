@@ -5,10 +5,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Product } from '../schema/product.schema';
 import { CreateProductDto, UpdateProductDto, UpdateProductStockDto } from '../dto/product.dto';
+import { Category } from '../../category/schema/category.schema';
 
 @Injectable()
 export class ProductService {
-    constructor(@InjectModel(Product.name) private productModel: Model<Product>) { }
+    constructor(
+        @InjectModel(Product.name) private productModel: Model<Product>,
+        @InjectModel(Category.name) private categoryModel: Model<Category>
+    ) { }
 
     /**
      * Find all products
@@ -27,6 +31,17 @@ export class ProductService {
     * @param data
     */
     async create(data: CreateProductDto) {
+
+        // VALIDATE CATEGORY IF NOT EXIST
+        const isCategoryExist = await this.checkCategoryExist(data.categoryId);
+        if (!isCategoryExist) {
+            return {
+                message: 'Category Not found',
+                success: false,
+                data: null
+            }
+        }
+
         const resultCreated = await this.productModel.create(data);
 
         return {
@@ -43,6 +58,17 @@ export class ProductService {
      */
     async update(id: string, data: UpdateProductDto) {
         try {
+
+            // VALIDATE CATEGORY IF NOT EXIST
+            const isCategoryExist = await this.checkCategoryExist(data.categoryId);
+            if (!isCategoryExist) {
+                return {
+                    message: 'Category Not found',
+                    success: false,
+                    data: null
+                }
+            }
+
             const resultUpdated = await this.productModel.findByIdAndUpdate(id, data, { new: true });
             if (!resultUpdated) {
                 // Handle case when document with the given id is not found
@@ -122,6 +148,10 @@ export class ProductService {
         } catch (error) {
             throw error;
         }
+    }
+
+    async checkCategoryExist(categoryId: string) {
+        return await this.categoryModel.findById(categoryId);
     }
 }
 

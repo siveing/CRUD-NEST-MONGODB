@@ -6,6 +6,7 @@ import { Product } from "../schema/product.schema";
 import { ProductController } from "./product.controller";
 import { ProductService } from "../service/product.service";
 import { CreateProductDto, UpdateProductDto, UpdateProductStockDto } from "../dto/product.dto";
+import { Category } from "../../category/schema/category.schema";
 
 
 // Mock Product Model
@@ -14,6 +15,10 @@ const mockProductModel = {
     find: jest.fn(),
     findByIdAndUpdate: jest.fn(),
     findByIdAndDelete: jest.fn()
+};
+
+const mockCategoryModel = {
+    findById: jest.fn()
 };
 
 describe('Product Controller', () => {
@@ -27,6 +32,7 @@ describe('Product Controller', () => {
                 ProductService,
                 // Provide the mock for productModel
                 { provide: getModelToken(Product.name), useValue: mockProductModel },
+                { provide: getModelToken(Category.name), useValue: mockCategoryModel },
             ],
         }).compile();
 
@@ -63,7 +69,34 @@ describe('Product Controller', () => {
     });
 
     describe('create', () => {
+
+        it('should return message error when no category exist', async () => {
+         
+            mockCategoryModel.findById = jest.fn().mockResolvedValue(false);
+
+            const messageCategoryNotExist = {
+                "data": null,
+                "message": "Category Not found",
+                "success": false,
+            }
+
+            const data: CreateProductDto = {
+                name: 'Siveing',
+                description: 'Siveing description',
+                categoryId: 'any',
+                price: 4000,
+                stock: 10
+            }
+
+            mockProductModel.create.mockResolvedValueOnce(data);
+
+            const result = await productController.create(data);
+            expect(result).toEqual(messageCategoryNotExist);
+        });
+
         it('should return an object of product created"', async () => {
+
+            mockCategoryModel.findById = jest.fn().mockResolvedValue(true);
 
             const data: CreateProductDto = {
                 name: 'Siveing',
@@ -88,6 +121,8 @@ describe('Product Controller', () => {
 
     describe('update', () => {
         it('should return an object of product updated"', async () => {
+
+            mockCategoryModel.findById = jest.fn().mockResolvedValue(true);
 
             const productId = 'existingProductId';
             const data: UpdateProductDto = {
