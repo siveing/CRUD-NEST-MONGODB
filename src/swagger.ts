@@ -7,7 +7,7 @@ export const SwaggerDocument = (app: INestApplication) => {
     const options = new DocumentBuilder()
         .setTitle('CRUD with MongoDB')
         .setDescription("Testing CRUD with MongoDB")
-        .setVersion('0.0.1')
+        .setVersion('1.0.0')
         .addBearerAuth()
         .build();
 

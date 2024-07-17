@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto, UpdateCategoryDto } from '../dto/category.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Category } from '../schema/category.schema';
 import { Product } from '../../product/schema/product.schema';
+import { CreateCategoryDto, UpdateCategoryDto } from '../dto/category.dto';
+import { Category } from '../schema/category.schema';
+import { SocketGateway } from 'src/libs/socket/socket.gateway';
 
 @Injectable()
 export class CategoryService {
@@ -11,7 +12,9 @@ export class CategoryService {
     // GET COLLECTIONS INSTANCE
     constructor(
         @InjectModel(Category.name) private categoryModel: Model<Category>,
-        @InjectModel(Product.name) private productModel: Model<Product>
+        @InjectModel(Product.name) private productModel: Model<Product>,
+
+        private socketGatewat: SocketGateway,
     ) { }
 
     /**
@@ -20,6 +23,10 @@ export class CategoryService {
      */
     async findAll() {
         const resultCategories = await this.categoryModel.find();
+
+        this.socketGatewat.emit("getCategories", {
+            data: resultCategories
+        });
 
         return {
             message: 'All categories',

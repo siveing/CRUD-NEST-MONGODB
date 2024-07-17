@@ -6,6 +6,7 @@ import { CategoryService } from "./service/category.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Category, CategorySchema } from "./schema/category.schema";
 import { Product, ProductSchema } from "@modules/product/schema/product.schema";
+import { SocketGateway } from "src/libs/socket/socket.gateway";
 
 @Module({
     imports: [
@@ -16,7 +17,7 @@ import { Product, ProductSchema } from "@modules/product/schema/product.schema";
         ])
     ],
     controllers: [CategoryController],
-    providers: [CategoryService],
+    providers: [CategoryService, SocketGateway],
     exports: []
 })
 
